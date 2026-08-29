@@ -4,19 +4,24 @@ import time
 
 cap = cv.VideoCapture("leopard.mp4")
 
-framecount = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
-fps = cap.get(cv.CAP_PROP_FPS)
+frame_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+
+fourcc = cv.VideoWriter_fourcc(*"MP4V")
+out = cv.VideoWriter("output.mp4", fourcc, 24.0, (frame_width, frame_height))
+
+
+
 while True:
     ret, frame = cap.read()
-    if not ret:
-        cap.release()
-        cap = cv.VideoCapture("leopard.mp4")
-        ret, frame = cap.read()
-    time.sleep(1/fps)
+    # if not ret:
+    #     cap.release()
+    #     cap = cv.VideoCapture("leopard.mp4")
+    #     ret, frame = cap.read()
 
     bw_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-    pxl_size = 10
+    pxl_size = 7
     temp_small = cv.resize(bw_frame, (int(frame.shape[1] / pxl_size), int(frame.shape[0] / pxl_size)), interpolation=cv.INTER_LINEAR)
     pxl_frame = cv.resize(temp_small, (frame.shape[1], frame.shape[0]), interpolation=cv.INTER_NEAREST)
 
@@ -32,10 +37,12 @@ while True:
             n = n / 255 * l
             n = int(l - n)
             if n > 1:
-                black_frame = cv.putText(black_frame, signs[n], (y*pxl_size, x*pxl_size), cv.FONT_HERSHEY_SIMPLEX, 0.45, (int(temp_small[x,y])/255 * 5) ** 3 * 5, 1)
+                black_frame = cv.putText(black_frame, signs[n], (y*pxl_size, x*pxl_size), cv.FONT_HERSHEY_SIMPLEX, pxl_size / 24, int(temp_small[x,y]/255 * 6) ** 2.5 * 12 , 1)
     cv.imshow("Frame", black_frame)
+    out.write((cv.cvtColor(black_frame, cv.COLOR_GRAY2BGR)))
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
 cv.destroyAllWindows()
 cap.release()
+out.release()
