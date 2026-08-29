@@ -32,10 +32,10 @@ while True:
             n = n / 255 * l
             n = int(l - n)
             if n > 1:
-                black_frame = cv.putText(black_frame, signs[n], (y*pxl_size, x*pxl_size), cv.FONT_HERSHEY_SIMPLEX, 0.5, (int(temp_small[x,y])/255 * 5) ** 3 * 5, 1)
+                black_frame = cv.putText(black_frame, signs[n], (y*pxl_size, x*pxl_size), cv.FONT_HERSHEY_SIMPLEX, 0.45, (int(temp_small[x,y])/255 * 5) ** 3 * 5, 1)
     cv.imshow("Frame", black_frame)
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
-    
+
 cv.destroyAllWindows()
 cap.release()
